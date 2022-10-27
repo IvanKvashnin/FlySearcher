@@ -1,20 +1,20 @@
 package com.ikvashnin.bot;
 
 import lombok.NoArgsConstructor;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import static com.ikvashnin.bot.botUtils.returnStartMessage;
-import static com.ikvashnin.bot.botUtils.returnUserMessage;
+import static com.ikvashnin.bot.BotUtils.returnStartMessage;
+import static com.ikvashnin.bot.BotUtils.returnUserMessage;
 
 @Component
 @NoArgsConstructor
+@Slf4j
 public class Bot extends TelegramLongPollingBot {
-    private static final Logger log = Logger.getLogger(TelegramBotApplication.class);
     @Value("${name}")
     private String botName;
     @Value("${token}")
@@ -23,18 +23,14 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         log.debug("Receive new Update. updateID: " + update.getUpdateId());
-        if (update.getMessage().getText().startsWith("/start")) {
-            try {
+        try {
+            if (update.getMessage().getText().startsWith("/start")) {
                 execute(returnStartMessage(update));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
+            } else
                 execute(returnUserMessage(update));
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
-            }
+        } catch (TelegramApiException e) {
+            log.debug("ID пользовтеля: " + update.getMessage().getFrom().getId() +
+                    " Сообщение пользователя: " + update.getMessage().getText());
         }
     }
 
