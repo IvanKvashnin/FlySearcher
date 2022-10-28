@@ -26,11 +26,12 @@ public class Bot extends TelegramLongPollingBot {
         try {
             if (update.getMessage().getText().startsWith("/start")) {
                 execute(returnStartMessage(update));
-            } else
+            } else {
                 execute(returnUserMessage(update));
+            }
         } catch (TelegramApiException e) {
-            log.debug("ID пользовтеля: " + update.getMessage().getFrom().getId() +
-                    " Сообщение пользователя: " + update.getMessage().getText());
+            log.error(String.format("ID пользовтеля: %s, Сообщение пользователя: %s",
+                    update.getMessage().getFrom().getId(), update.getMessage().getText()), e);
         }
     }
 
