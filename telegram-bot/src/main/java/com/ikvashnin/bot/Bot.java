@@ -15,9 +15,9 @@ import static com.ikvashnin.bot.BotUtils.returnUserMessage;
 @NoArgsConstructor
 @Slf4j
 public class Bot extends TelegramLongPollingBot {
-    @Value("${name}")
+    @Value("${telegram_bot.name}")
     private String botName;
-    @Value("${token}")
+    @Value("${telegram_bot.token}")
     private String botToken;
 
     @Override

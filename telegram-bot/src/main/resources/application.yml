@@ -1,4 +1,7 @@
-name: ${TELEGRAM_BOT_NAME}
-token: ${TELEGRAM_BOT_TOKEN}
+telegram_bot:
+  name: ${TELEGRAM_BOT_NAME}
+  token: ${TELEGRAM_BOT_TOKEN}
 
+travelpayouts:
+  token: ${TRAVELPAYOUTS_TOKEN}
 
