@@ -3,7 +3,7 @@ package com.ikvashnin.bot;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -11,14 +11,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import static com.ikvashnin.bot.BotUtils.returnStartMessage;
 import static com.ikvashnin.bot.BotUtils.returnUserMessage;
 
-@Component
 @NoArgsConstructor
 @Slf4j
+@Service
 public class Bot extends TelegramLongPollingBot {
-    @Value("${telegram_bot.name}")
+    @Value("${bot.name}")
     private String botName;
-    @Value("${telegram_bot.token}")
+    @Value("${bot.token}")
     private String botToken;
+
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -30,8 +31,7 @@ public class Bot extends TelegramLongPollingBot {
                 execute(returnUserMessage(update));
             }
         } catch (TelegramApiException e) {
-            log.error(String.format("ID пользовтеля: %s, Сообщение пользователя: %s",
-                    update.getMessage().getFrom().getId(), update.getMessage().getText()), e);
+            log.error(String.format("ID пользовтеля: %s, Сообщение пользователя: %s", update.getMessage().getFrom().getId(), update.getMessage().getText()), e);
         }
     }
 

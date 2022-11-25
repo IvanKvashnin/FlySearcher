@@ -1,0 +1,10 @@
+bot:
+  name: test
+  token: test
+
+taravelpayouts:
+  token: test
+
+endpoint:
+  cities: https://api.travelpayouts.com/aviasales_resources/v3/cities.json?locale=ru
+
