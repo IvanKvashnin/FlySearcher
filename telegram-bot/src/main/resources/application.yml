@@ -1,4 +1,11 @@
-name: ${TELEGRAM_BOT_NAME}
-token: ${TELEGRAM_BOT_TOKEN}
+bot:
+  name: ${TELEGRAM_BOT_NAME}
+  token: ${TELEGRAM_BOT_TOKEN}
+
+taravelpayouts:
+  token: ${TRAVELPAYOUTS_TOKEN}
+
+endpoint:
+  cities: "https://api.travelpayouts.com/aviasales_resources/v3/cities.json?locale=ru"
 
 
