@@ -3,15 +3,17 @@ package com.ikvashnin.bot;
 import com.ikvashnin.bot.citysearcher.Cases;
 import com.ikvashnin.bot.citysearcher.City;
 import com.ikvashnin.bot.citysearcher.CitySearcher;
+import com.ikvashnin.bot.dateparser.DateParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.telegram.telegrambots.starter.TelegramBotStarterConfiguration;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class TelegramBotApplicationTests {
@@ -20,37 +22,47 @@ class TelegramBotApplicationTests {
     @Autowired
     CitySearcher citySearcher;
 
-    @Test
-    void endingOfTheWord() {
-        String telegramMsg = "Я полечу в Стамбул из Москвы, а потом в Баку";
-        String[] splitTelegramMsg = telegramMsg.replaceAll("[^A-Za-zА-Яа-я0-9]", " ").split("\\s");
-        List<Cases> cases = citySearcher.search().stream().map(City::getCases).toList();
-        ArrayList<String> casesToString = new ArrayList<>();
-        for (Cases c : cases) {
-            if (c != null) {
-                casesToString.add(c.getDa());
-                casesToString.add(c.getPr());
-                casesToString.add(c.getRo());
-                casesToString.add(c.getSu());
-                casesToString.add(c.getTv());
-                casesToString.add(c.getVi());
-            }
-        }
-        ArrayList<String> splitCases = new ArrayList<>();
-        for (String sc : casesToString) {
-            if (sc != null)
-                splitCases.add(sc.substring(sc.indexOf(" ") + 1));
-        }
+    @Autowired
+    DateParser dateParser;
 
-        HashSet<String> citiesFromMsg = new HashSet<>();
-        for (String sc : splitCases) {
-            for (String msg : splitTelegramMsg) {
-                if (sc.equals(msg)) {
-                    citiesFromMsg.add(sc);
-                }
+
+    @Test
+    public void test() {
+        String telegramMsg = "Я полечу в Стамбул из Москвы, а потом в Баку";
+        String[] words = telegramMsg.replaceAll("[^A-Za-zА-Яа-я0-9]", " ").split("\\s");
+        ArrayList<City> cities = new ArrayList<>();
+        for (String word : words) {
+            var city = citySearcher.search(word);
+            if (city != null) {
+                cities.add(city);
             }
         }
-        citiesFromMsg.forEach(System.out::println);
+        assertThat(cities).size().isEqualTo(2);
+    }
+
+    @Test
+    public void cityTest() {
+        var city = City.builder().name("Москва")
+                .code("MOW")
+                .cases(Cases.builder()
+                        .da("Москве")
+                        .pr("Москве")
+                        .ro("Москвы")
+                        .su("Москва")
+                        .tv("Москвой")
+                        .vi("в Москву")
+                        .build())
+                .build();
+        assertThat(city.isCityName("Стамбул")).isFalse();
+        assertThat(city.isCityName("Москвой")).isTrue();
+    }
+
+    @Test
+    public void dateTest() {
+        String msg = "Я полечу 21.03.2022 в Москву";
+        assertThat(LocalDate.of(2022, 3, 21)).isEqualTo(DateParser.parse("21.03.2022"));
+        assertThat(LocalDate.of(2022, 6, 21)).isEqualTo(DateParser.parse("21 июня 2022"));
+        assert DateParser.parse("я") == null;
     }
 }
 

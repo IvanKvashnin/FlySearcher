@@ -9,7 +9,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -19,7 +18,7 @@ public class CitySearcher {
     @Value("${endpoint.cities}")
     private String endPointCities;
 
-    public List<City> search() {
+    public City search(String cityName) {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<City[]> response;
         try {
@@ -28,6 +27,8 @@ public class CitySearcher {
             log.error(String.format("Статус запроса: %s", e.getStatusText()), e);
             throw new RuntimeException(e);
         }
-        return Arrays.asList(Objects.requireNonNull(response.getBody()));
+
+        var cities = Arrays.asList(Objects.requireNonNull(response.getBody()));
+        return cities.stream().filter(city -> city.isCityName(cityName)).findFirst().orElse(null);
     }
 }
