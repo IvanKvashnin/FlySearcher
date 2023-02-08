@@ -29,6 +29,6 @@ public class CitySearcher {
         }
 
         var cities = Arrays.asList(Objects.requireNonNull(response.getBody()));
-        return cities.stream().filter(city -> city.isCityName(cityName)).findFirst().orElse(null);
+        return cities.stream().filter(Objects::nonNull).filter(city -> city.isCityName(cityName)).findFirst().orElse(null);
     }
 }

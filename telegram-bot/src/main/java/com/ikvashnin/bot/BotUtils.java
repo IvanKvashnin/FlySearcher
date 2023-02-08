@@ -11,11 +11,5 @@ public class BotUtils {
         message.setText("Hello. This is start message");
         return message;
     }
-    public static SendMessage returnUserMessage(Update update) {
-        SendMessage message = new SendMessage();
-        message.setChatId(update.getMessage().getChatId());
-        message.setText(update.getMessage().getText());
-        return message;
-    }
 }
 
